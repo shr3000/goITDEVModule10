@@ -1,81 +1,59 @@
 package clients;
 
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-
-import java.util.List;
+import org.hibernate.query.Query;
+import conf.HibernateConfiguration;
 
 public class ClientCrudService {
 
-    private final SessionFactory sessionFactory;
+    public long createClient(Client client) {
+        if (client == null) {
+            return -1;
+        }
 
-    public ClientCrudService(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
-
-    public void addClient(Client client) {
-        Transaction transaction = null;
-        try (Session session = sessionFactory.openSession()) {
-            transaction = session.beginTransaction();
-            session.save(client);
+        try (Session session = HibernateConfiguration.getInstance().getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+            session.persist(client);
             transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
+            return client.getId();
         }
     }
 
-    public Client getClientById(int id) {
-        try (Session session = sessionFactory.openSession()) {
-            return session.get(Client.class, id);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+    public Client getById(long id) {
+        try (Session session = HibernateConfiguration.getInstance().getSessionFactory().openSession()) {
+            Query<Client> query = session.createQuery(
+                    "from Client where id = :id",
+                    Client.class
+            );
+            query.setParameter("id", id);
+            return query.stream().findFirst().orElse(null);
         }
     }
 
-    public List<Client> getAllClients() {
-        try (Session session = sessionFactory.openSession()) {
-            return session.createQuery("from Client", Client.class).list();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+    public long updateClient(Client client) {
+        if (client == null) {
+            return -1;
         }
-    }
 
-    public void updateClient(Client client, Long id) {
-        Transaction transaction = null;
-        try (Session session = sessionFactory.openSession()) {
-            transaction = session.beginTransaction();
-            client.setId(id);
-            session.update(client);
+        try (Session session = HibernateConfiguration.getInstance().getSessionFactory().openSession();) {
+            Transaction transaction = session.beginTransaction();
+            session.merge(client);
             transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
+            return client.getId();
         }
     }
 
-    public void deleteClient(int id) {
-        Transaction transaction = null;
-        try (Session session = sessionFactory.openSession()) {
-            transaction = session.beginTransaction();
-            Client client = session.get(Client.class, id);
-            if (client != null) {
-                session.delete(client);
-            }
+    public long deleteClient(Client client) {
+        if (client == null) {
+            return -1;
+        }
+
+        try (Session session = HibernateConfiguration.getInstance().getSessionFactory().openSession();) {
+            Transaction transaction = session.beginTransaction();
+            session.remove(client);
             transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
+            return client.getId();
         }
     }
-
 }

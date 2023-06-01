@@ -1,23 +1,24 @@
 package conf;
 
 import clients.Client;
+import planets.Planet;
 import lombok.Getter;
 import org.hibernate.SessionFactory;
-import planets.Planet;
+import org.hibernate.cfg.Configuration;
 
+public class HibernateConfiguration {
 
-public class Configuration {
-    private static final Configuration INSTANCE;
+    private static final HibernateConfiguration INSTANCE;
 
     static {
-        INSTANCE = new Configuration();
+        INSTANCE = new HibernateConfiguration();
     }
 
     @Getter
     private SessionFactory sessionFactory;
 
-    private Configuration() {
-        sessionFactory = new org.hibernate.cfg.Configuration()
+    private HibernateConfiguration() {
+        sessionFactory = new Configuration()
                 .addAnnotatedClass(Client.class)
                 .addAnnotatedClass(Planet.class)
                 .buildSessionFactory();
@@ -25,7 +26,7 @@ public class Configuration {
         FlywayConfiguration.migrate((String) sessionFactory.getProperties().get("hibernate.connection.url"));
     }
 
-    public static Configuration getInstance() {
+    public static HibernateConfiguration getInstance() {
         return INSTANCE;
     }
 

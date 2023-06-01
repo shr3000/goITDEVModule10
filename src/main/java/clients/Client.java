@@ -1,18 +1,15 @@
 package clients;
-
 import jakarta.persistence.*;
 import lombok.Data;
-
-@Table(name = "Client")
 @Entity
 @Data
 public class Client {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column()
+    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
+    @Column(nullable = false)
     private long id;
 
-    @Column()
+    @Column(length = 300)
     private String name;
 }
