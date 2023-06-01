@@ -1,6 +1,0 @@
-2023-05-30 20:04:12 jdbc[4]: exception
-org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "CLIENT" not found; SQL statement:
-insert into Client (name,id) values (?,default) [42102-214]
-2023-05-30 20:05:01 jdbc[4]: exception
-org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "CLIENT" not found; SQL statement:
-insert into Client (name,id) values (?,default) [42102-214]
